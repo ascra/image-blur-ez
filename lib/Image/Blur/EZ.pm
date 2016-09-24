@@ -6,13 +6,23 @@ use Image::Info qw/image_info/;
 use Imager;
 use Carp qw/croak/;
 
+# ABSTRACT: blur an image or a region of an image
+
 sub blur {
 }
 
-sub blur_fast {
+sub blur_region {
 }
 
-sub _image_info {
+# extract image type using Image::Info 
+sub _image_type {
+    my ($self, $image_data) = @_;
+
+    my $img_info = image_info $image_data;
+    my $img_type = $img_info ? $img_info->{file_media_type} : '';
+    (undef, $img_type) =~ m!(image\/)(\w+)!;
+    
+    return $img_type;
 }
 
 1;
