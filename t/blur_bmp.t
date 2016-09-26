@@ -3,7 +3,6 @@
 use warnings;
 use strict;
 use Test::More qw/no_plan/;
-use Digest::CRC;
 use FindBin;
 
 BEGIN { use_ok 'Image::Blur::EZ' }
@@ -20,24 +19,27 @@ sub run_tests {
 
 # blur an entire image
 sub test_full_blur {
-    my $contents = shift;
-    my $copy = $$contents;
+    my $image = shift;
+    my $copy = $$image;
     
-    Image::Blur::EZ->blur($copy);
-    
-    check_diff($contents, $copy);
+    # simple blur with defaults
+    Image::Blur::EZ->blur(\$copy);
+    isnt(data_is_eq($image, \$copy), 1, "bmp blurred");
 }
 
 # blur a region of an image
 sub test_region_blur {
 }
 
-sub check_diff {
-    my ($orig, $copy) = @_;
+sub data_is_eq {
+    my ($one, $two) = @_;
+    
+    my @one_hex = map { unpack("h", $_) } (split //, $$one);
+    my @two_hex = map { unpack("h", $_) } (split //, $$two);
 
-    # compare $orig and $copy
-    # ...
+    return eq_array(\@one_hex, \@two_hex);
 }
+
 
 
 run_tests();
